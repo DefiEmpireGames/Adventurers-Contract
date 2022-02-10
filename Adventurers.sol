@@ -64,9 +64,9 @@ contract Adventurers {
         devAddress1=address(0xd6Cff43Ed26b2E5Ed228dB00569f4993fa881602);
         devAddress2=address(0xc349790802BD0E9a58a19fbe2E0FaB99611108d5);
     }
-    function dealWithDuplicate(address user) public returns (bool) {
+    function dealWithDuplicate() private returns (bool) {
         for (uint i=0; i<10; i++) {
-            if (leaderboard[i].user == user) {
+            if (leaderboard[i].user == msg.sender) {
                 while (i<10) {
                     leaderboard[i] = leaderboard[i+1];
                     i++;
@@ -75,9 +75,9 @@ contract Adventurers {
             }
         }
     }
-    function addScore(address user, uint256 score) private returns (bool) {
+    function addScore(uint256 score) private returns (bool) {
         if (leaderboard[leaderboardLength-1].score >= score) return false;
-        dealWithDuplicate(user);
+        dealWithDuplicate(msg.sender);
         for (uint i=0; i<leaderboardLength; i++) {
             if (leaderboard[i].score < score) {
                 User memory currentUser = leaderboard[i];
@@ -87,7 +87,7 @@ contract Adventurers {
                     currentUser = nextUser;
                 }
                 leaderboard[i] = User({
-                    user: user,
+                    user: msg.sender,
                     score: score
                 });
                 delete leaderboard[leaderboardLength];
